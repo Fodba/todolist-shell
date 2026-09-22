@@ -34,14 +34,14 @@ afficher_liste()
 compte_taches()
 {
     # IDs=1
-    IDs=$(wc -l "taches.md" | jq -r)
+    IDs=$(wc -l <"taches.md" )
     # archives=$(cat "taches.md")
     # for item in "${archives[@]}"
     # do
     #     echo $IDs
     #     IDs=$((IDs+1))
     # done
-    echo $IDs
+    echo $IDs "tache(s) sont enregistrées"
     echo "------------------------------------"
 }
 
@@ -49,13 +49,33 @@ ajouter_tache()
 {
     read -p "Veuillez renseigner une nouvelle tâche : " tache_desc
     echo $tache_desc
-    echo $IDs
+    compte_taches
+    # echo $IDs
     IDs=$((IDs+1))
     echo "------------------------------------"
-    TACHES+=([$IDs,"$tache_desc"])
+    TACHES+=([$IDs,"$tache_desc",0])
     echo $TACHES >> "taches.md" | jq -R
-    echo $TACHES
-    echo $IDs
+    # echo $TACHES
+    # echo $IDs
+}
+
+afficher_liste2()
+{
+    IDs=0
+    compteur=0
+    choix=0
+    archives=$(cat "taches.md")
+    for item in "${archives[@]}"
+    do
+        echo "$item"
+        compteur=$((compteur+1))
+        if [[ $1 != 0 ]]; then
+            choix=$compteur
+            echo $choix
+        fi
+        # IDs=$((IDs+1))
+    done
+    return $IDs
 }
 
 # modifier_tache()
@@ -78,29 +98,30 @@ afficher_liste
 echo $IDs
 echo "------------------------------------"
 echo "------------------------------------"
+afficher_liste2 5
 echo "------------------------------------"
 
 if [[ $choix = 1 ]]; then
 
+    compte_taches
     afficher_liste
 
 elif [[ $choix = 2 ]]; then
-    # read -p "Veuillez renseigner une nouvelle tâche : " tache_desc
-    # echo $tache_desc
-    # TACHES+=([$IDs,"$tache_desc"])
-    # IDs=$((IDS+1))
-    # echo $TACHES >> "taches.md" | jq -R
-    # echo $TACHES
-    # echo $IDs
+
     ajouter_tache
     afficher_liste
+
 else 
+
     echo "------------------------------------"
-    echo $archives
-    for item in "${archives[@]}\n"
-    do
-        echo "$item \n"
-    done
+    compte_taches
+    afficher_liste
+
+    # echo $archives
+    # for item in "${archives[@]}\n"
+    # do
+    #     echo "$item \n"
+    # done
     
     if [[ $choix = 3 ]]; then
         read -p "Indiquez le numéro de la tâche à modifier " tache_select
